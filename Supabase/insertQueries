@@ -1,0 +1,15 @@
+-- INSERT INTO users (user_id, name, email, password, phone_number, role, profile_picture, department_name) VALUES
+-- ('550e8400-e29b-41d4-a716-446655440000', 'Amit Sharma', 'amit.sharma@example.com', 'hashed_password_1', '9876543210', 'admin', 'https://source.unsplash.com/100x100/?face', NULL),
+-- ('550e8400-e29b-41d4-a716-446655440001', 'Rohit Verma', 'rohit.verma@example.com', 'hashed_password_2', '9876543211', 'commissioner', 'https://source.unsplash.com/100x100/?face', NULL),
+-- ('550e8400-e29b-41d4-a716-446655440002', 'Meera Patel', 'meera.patel@example.com', 'hashed_password_3', '9876543212', 'departmentHead', 'https://source.unsplash.com/100x100/?face', 'Health'),
+-- ('550e8400-e29b-41d4-a716-446655440003', 'Suresh Kumar', 'suresh.kumar@example.com', 'hashed_password_4', '9876543213', 'departmentHead', 'https://source.unsplash.com/100x100/?face', 'Road'),
+-- ('550e8400-e29b-41d4-a716-446655440004', 'Alok Singh', 'alok.singh@example.com', 'hashed_password_5', '9876543214', 'staffHead', 'https://source.unsplash.com/100x100/?face', 'Cleaning');
+
+-- INSERT INTO issues (issue_id, title, description, photo_complaint, photo_resolved, status, created_date, assigned_to_staffHead, resolved_date, likes_count, dislikes_count, location) VALUES
+-- ('660e8400-e29b-41d4-a716-446655440100', 'Pothole on Main Street', 'Large pothole causing traffic issues.', 'https://source.unsplash.com/400x300/?pothole', NULL, 'unassigned', now(), NULL, NULL, 10, 2, 'Main Street, New Delhi'),
+-- ('660e8400-e29b-41d4-a716-446655440101', 'Garbage Overflowing', 'Garbage not collected for a week.', 'https://source.unsplash.com/400x300/?garbage', NULL, 'in progress', now(), '550e8400-e29b-41d4-a716-446655440004', NULL, 5, 1, 'Sector 22, Mumbai'),
+-- ('660e8400-e29b-41d4-a716-446655440102', 'Streetlight Not Working', 'Complete blackout in the street.', 'https://source.unsplash.com/400x300/?streetlight', 'https://source.unsplash.com/400x300/?fixed-light', 'resolved', now(), '550e8400-e29b-41d4-a716-446655440004', now(), 15, 0, 'MG Road, Bangalore');
+
+-- INSERT INTO assignments (assignment_id, assigned_to_staffHead, issue_id, status, created_date, resolved_date) VALUES
+-- ('770e8400-e29b-41d4-a716-446655440200', '550e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440101', 'in progress', now(), NULL),
+-- ('770e8400-e29b-41d4-a716-446655440201', '550e8400-e29b-41d4-a716-446655440004', '660e8400-e29b-41d4-a716-446655440102', 'resolved', now(), now());
