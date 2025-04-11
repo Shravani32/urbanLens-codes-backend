@@ -5,8 +5,7 @@ import issueRoutes from "./Routes/issueRoutes.js";
 import assignmentRoutes from "./Routes/assignmentRoutes.js";
 import authRoutes from "./Routes/AuthRoutes.js";
 import userRoutes from "./Routes/userRoutes.js";
-
-// Load environment variables
+import connectDB from "./config/db.js"; // Import the database connection
 dotenv.config(); 
 
 const app = express();
@@ -28,5 +27,7 @@ app.use("/api/users", userRoutes);
 // Start the server
 app.listen(PORT, () => {
     console.log(`✅ Server is running on port ${PORT}`);
+    // Initialize the database connection
+    connectDB();
 });
 

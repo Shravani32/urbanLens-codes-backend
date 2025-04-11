@@ -1,27 +1,36 @@
-import supabase from "../supabaseClient.js";
+import Assignment from "../models/Assignment.js"; 
 
-// Get all assignments for logged-in staff
 export const getAssignments = async (req, res) => {
-    const { userId } = req.user;
-    const { data, error } = await supabase
-        .from("assignments")
-        .select("*")
-        .eq("assigned_to", userId);
-    
-    if (error) return res.status(400).json(error);
-    res.json(data);
+    try {
+        const { userId } = req.user;
+        const assignments = await Assignment.find({ assignedTo: userId });
+        res.json(assignments);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };
 
-// Mark an assignment as resolved
 export const resolveAssignment = async (req, res) => {
-    const { id } = req.params;
-    const { photo_resolved } = req.body;
+    try {
+        const { id } = req.params;
+        const { photo_resolved } = req.body;
 
-    const { error } = await supabase
-        .from("assignments")
-        .update({ status: "resolved", resolved_date: new Date(), photo_resolved })
-        .eq("id", id);
+        const updatedAssignment = await Assignment.findByIdAndUpdate(
+            id,
+            {
+                status: "completed", // ✅ Must match enum
+                resolved_date: new Date(),
+                photo_resolved
+            },
+            { new: true }
+        );
 
-    if (error) return res.status(400).json(error);
-    res.json({ message: "Issue resolved successfully" });
+        if (!updatedAssignment) {
+            return res.status(404).json({ error: "Assignment not found" });
+        }
+
+        res.json({ message: "Issue resolved successfully", updatedAssignment });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 };

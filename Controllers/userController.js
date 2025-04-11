@@ -1,51 +1,52 @@
-import supabase from "../supabaseClient.js";
+import User from "../models/User.js";
 
-// ✅ Get all users
+// Get all users
 export const getUsers = async (req, res) => {
     try {
-        const { data, error } = await supabase.from("users").select("*");
-        if (error) throw error;
-        res.status(200).json(data);
+        const users = await User.find();
+        res.status(200).json(users);
     } catch (error) {
         res.status(500).json({ message: "Failed to fetch users", error: error.message });
     }
 };
 
-// ✅ Get a single user by ID
+// Get user by ID
 export const getUserById = async (req, res) => {
     const { id } = req.params;
     try {
-        const { data, error } = await supabase.from("users").select("*").eq("user_id", id).single();
-        if (error) throw error;
-        res.status(200).json(data);
+        const user = await User.findById(id);
+        if (!user) return res.status(404).json({ message: "User not found" });
+        res.status(200).json(user);
     } catch (error) {
-        res.status(404).json({ message: "User not found", error: error.message });
+        res.status(500).json({ message: "Failed to get user", error: error.message });
     }
 };
 
-// ✅ Update user profile
+// Update user profile
 export const updateUser = async (req, res) => {
     const { id } = req.params;
-    const { name, email, phone_number, profile_picture } = req.body;
+    const { firstName, lastName, phone, adharNo, departmentName, profilePicture, location } = req.body;
+
     try {
-        const { data, error } = await supabase
-            .from("users")
-            .update({ name, email, phone_number, profile_picture })
-            .eq("user_id", id)
-            .select();
-        if (error) throw error;
-        res.status(200).json({ message: "User updated successfully", data });
+        const updatedUser = await User.findByIdAndUpdate(
+            id,
+            { firstName, lastName, phone, adharNo, departmentName, profilePicture, location },
+            { new: true }
+        );
+
+        if (!updatedUser) return res.status(404).json({ message: "User not found" });
+        res.status(200).json({ message: "User updated successfully", user: updatedUser });
     } catch (error) {
         res.status(500).json({ message: "Update failed", error: error.message });
     }
 };
 
-// ✅ Delete user (Admin only)
+// Delete user (Admin only)
 export const deleteUser = async (req, res) => {
     const { id } = req.params;
     try {
-        const { error } = await supabase.from("users").delete().eq("user_id", id);
-        if (error) throw error;
+        const deletedUser = await User.findByIdAndDelete(id);
+        if (!deletedUser) return res.status(404).json({ message: "User not found" });
         res.status(200).json({ message: "User deleted successfully" });
     } catch (error) {
         res.status(500).json({ message: "Failed to delete user", error: error.message });
