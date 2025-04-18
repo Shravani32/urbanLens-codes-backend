@@ -24,10 +24,10 @@ app.use("/api/issues", issueRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/users", userRoutes);
 
+connectDB();
+
 // Start the server
-app.listen(PORT, () => {
-    console.log(`✅ Server is running on port ${PORT}`);
-    // Initialize the database connection
-    connectDB();
-});
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on http://0.0.0.0:${PORT}`);
+  });
 

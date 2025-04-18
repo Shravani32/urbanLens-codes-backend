@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    adharNo: {
+    aadhar: {
         type: String,
         required: true,
     },
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    confirmPassword:{
+    rePassword:{
         type: String,
         required: true,
     },
@@ -37,10 +37,11 @@ const userSchema = new mongoose.Schema({
     profilePicture:{
         type: String,
     },
-    location:{
-        // dropdown - frontend
-        type: String,
-    }
+    location: {
+        latitude: { type: Number },
+        longitude: { type: Number },
+      },
+      
 }, {
     timestamps: true
 })

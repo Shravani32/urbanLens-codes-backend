@@ -12,16 +12,18 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       phone,
-      adharNo,
+      aadhar,
       role,
       password,
-      confirmPassword,
+      rePassword,
       departmentName,
       location,
     } = req.body;
 
+    console.log("Location from frontend:", location);
+
     // This is the file uploaded by multer (already on Cloudinary)
-    const profilePic = req.file;
+    const profilePic = req.files;
 
     // Check if user already exists
     const existingUser = await User.findOne({ phone });
@@ -29,7 +31,7 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    if (password !== confirmPassword) {
+    if (password !== rePassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
 
@@ -38,18 +40,23 @@ export const register = async (req, res) => {
     // Cloudinary URL already set by multer
     const profilePictureUrl = profilePic?.path || "";
 
-    const newUser = new User({
+    const newUser = await User.create({
       firstName,
       lastName,
       phone,
-      adharNo,
+      aadhar,
       role,
       password: hashedPassword,
-      confirmPassword: hashedPassword,
+      rePassword: hashedPassword,
       departmentName: role === "departmenthead" ? departmentName : null,
       profilePicture: profilePictureUrl,
-      location,
+      location: {
+        latitude: location.latitude,
+        longitude: location.longitude,
+      },
     });
+
+    console.log("Location from frontend:", location);
 
     await newUser.save();
     res.status(201).json({ message: "User registered successfully" });
@@ -67,6 +74,8 @@ export const login = async (req, res) => {
     const { phone, password } = req.body;
     const user = await User.findOne({ phone });
 
+    console.log("User :",user)
+
     if (!user) return res.status(404).json({ message: "User not found" });
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -78,6 +87,7 @@ export const login = async (req, res) => {
       { expiresIn: "10h" }
     );
 
+
     res.json({
       token,
       user: {
@@ -85,7 +95,6 @@ export const login = async (req, res) => {
         name: `${user.firstName} ${user.lastName}`,
         role: user.role,
         phone: user.phone,
-        profilePicture: user.profilePicture,
         departmentName: user.departmentName,
       },
     });
