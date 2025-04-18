@@ -42,41 +42,30 @@ export const getIssueById = async (req, res) => {
 
 // Create a new issue
 export const createIssue = async (req, res) => {
+  console.log("request achieved")
   try {
-    const {
-      description,
-      image, // URL from frontend
-      deparment,
-      userId,
-      location,
-      resolvedIssuePhoto, // can be optional at creation
-      likeCount,
-      dislikeCount,
-      comments,
-    } = req.body;
-
-    if (!image) {
-      return res.status(400).json({ message: "Image URL is required" });
-    }
+    const { department, issueAddress, description } = req.body;
 
     const newPost = new Post({
+      department,
+      issueAddress,
       description,
-      image,
-      deparment,
-      userId,
-      location,
-      resolvedIssuePhoto: resolvedIssuePhoto || "", // allow empty at first
-      likeCount: likeCount || 0,
-      dislikeCount: dislikeCount || 0,
-      comments,
     });
 
+    if (req.file) {
+      newPost.image.data = req.file.buffer;
+      newPost.image.contentType = req.file.mimetype;
+    }
+
     await newPost.save();
-    res.status(201).json(newPost);
+
+    console.log("Saved post:", newPost);
+    res.status(200).json({ message: "Issue reported successfully!" });
   } catch (error) {
-    console.error("Create Issue Error:", error);
-    res.status(500).json({ error: error.message });
-  }
+    console.error("Error creating issue:", error);
+    res.status(500).json({ message: "Failed to report the issue." });
+  } 
+
 };
 
 // Update an issue

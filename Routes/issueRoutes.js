@@ -1,14 +1,16 @@
 import express from "express";
 import { getAllIssues, getIssueById, createIssue, updateIssue, deleteIssue, getIssuesByDepartment } from "../Controllers/issueController.js";
 import { verifyToken } from "../Middleware/authMiddleWare.js";
+import upload from '../Middleware/upload.js';
+
 
 const router = express.Router();
 
-router.get("/", verifyToken, getAllIssues);
+router.get("/getallissues", verifyToken, getAllIssues);
 router.get("/department", verifyToken, getIssuesByDepartment);
-router.get("/:id", verifyToken, getIssueById);
-router.post("/", verifyToken, createIssue);
-router.put("/:id", verifyToken, updateIssue);
-router.delete("/:id", verifyToken, deleteIssue);
+router.get("/getbyId:id", verifyToken, getIssueById);
+router.post("/createissue",upload.single('image'), createIssue);
+router.put("/updateissue:id", verifyToken, updateIssue);
+router.delete("/deleteissue:id", verifyToken, deleteIssue);
 
 export default router;
