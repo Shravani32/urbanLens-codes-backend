@@ -76,8 +76,8 @@ export const createIssue = async (req, res) => {
   console.log("request achieved")
   try {
     const { department, issueAddress, description } = req.body;
-    console.log(req.user?.id);
-    const userId=req.user?.id;
+    console.log(req.user?._id);
+    const userId=req.user?._id;
     console.log("UserId:",userId)
 
     const newPost = new Post({
