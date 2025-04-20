@@ -1,4 +1,5 @@
 import Post from "../models/Post.js";
+import mongoose from "mongoose";
 
 // Get all issues (posts)
 export const getAllIssues = async (req, res) => {
@@ -8,6 +9,36 @@ export const getAllIssues = async (req, res) => {
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
+};
+
+export const getUserPosts = async (req, res) => {
+  try {
+    try {
+      const userId = req.params.userId;
+      console.log("UserId=",userId)
+  
+      const posts = await Post.find({ userId: new mongoose.Types.ObjectId(userId) }).sort({ createdAt: -1 });
+      // res.send({userId:userId,posts:posts})
+  
+      const postsWithImages = posts.map((post) => ({
+        description: post.description,
+        department: post.department,
+        status: post.status,
+        issueAddress: post.issueAddress,
+        image: post.image?.data?.toString('base64') || null,
+        imageType: post.image?.contentType || null,
+        createdAt: post.createdAt
+      }));
+  
+      return res.status(200).json(postsWithImages);
+    } catch (error) {
+      console.error("Error fetching user posts:", error);
+      res.status(500).json({ message: "Failed to fetch posts" });
+    }
+  } catch (error) {
+    console.error("Error fetching user posts:", error);
+    res.status(500).json({ message: "Failed to fetch posts" });
+  }
 };
 
 
@@ -45,11 +76,15 @@ export const createIssue = async (req, res) => {
   console.log("request achieved")
   try {
     const { department, issueAddress, description } = req.body;
+    console.log(req.user?.id);
+    const userId=req.user?.id;
+    console.log("UserId:",userId)
 
     const newPost = new Post({
       department,
       issueAddress,
       description,
+      userId
     });
 
     if (req.file) {

@@ -1,10 +1,12 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import User from "../models/User.js"; // Make sure this path is correct
 
 dotenv.config();
 
-export const verifyToken = (req, res, next) => {
-    const token = req.header("Authorization")?.split(" ")[1];
+export const verifyToken = async (req, res, next) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
 
     if (!token) {
         return res.status(401).json({ message: "Access denied. No token provided." });
@@ -12,10 +14,12 @@ export const verifyToken = (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded; // Attach user data to request
-        console.log(req.user);
+        console.log("Decode:",decoded)
+        req.user = await User.findById(decoded.userId).select("-password");
+        console.log("Token verified, user:", decoded.userId);
         next();
     } catch (error) {
-        res.status(403).json({ message: "Invalid token" });
+        console.error("JWT verification error:", error.message);
+        res.status(403).json({ message: "Invalid or expired token" });
     }
 };
