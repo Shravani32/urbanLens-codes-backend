@@ -12,18 +12,23 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       phone,
-      aadhar,
+      adharNo,
       role,
       password,
-      rePassword,
+      confirmPassword,
       departmentName,
       location,
     } = req.body;
 
-    console.log("Location from frontend:", location);
+    console.log("Req body:",req.body);
+
+    // console.log("Location from frontend:", location);
 
     // This is the file uploaded by multer (already on Cloudinary)
-    const profilePic = req.files;
+
+    const profilePic = req.file ? req.file : null;
+
+    console.log("Prof pic",profilePic)
 
     // Check if user already exists
     const existingUser = await User.findOne({ phone });
@@ -31,11 +36,14 @@ export const register = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    if (password !== rePassword) {
+    if (password !== confirmPassword) {
       return res.status(400).json({ message: "Passwords do not match" });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    console.log("hashed password:",hashedPassword);
+
+    console.log("Req.body:",req.body)
 
     // Cloudinary URL already set by multer
     const profilePictureUrl = profilePic?.path || "";
@@ -44,10 +52,10 @@ export const register = async (req, res) => {
       firstName,
       lastName,
       phone,
-      aadhar,
+      adharNo,
       role,
       password: hashedPassword,
-      rePassword: hashedPassword,
+      confirmPassword: hashedPassword,
       departmentName: role === "departmenthead" ? departmentName : null,
       profilePicture: profilePictureUrl,
       location: {
@@ -56,7 +64,8 @@ export const register = async (req, res) => {
       },
     });
 
-    console.log("Location from frontend:", location);
+    // console.log("Location from frontend:", location);
+    console.log("NewUser:",newUser);
 
     await newUser.save();
     res.status(201).json({ message: "User registered successfully" });

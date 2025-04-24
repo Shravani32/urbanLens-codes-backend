@@ -23,6 +23,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/issues", issueRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/users", userRoutes);
+express.urlencoded({ extended: true })
 
 connectDB();
 

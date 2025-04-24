@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: true,
     },
-    aadhar: {
+    adharNo: {
         type: String,
         required: true,
     },
@@ -27,7 +27,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    rePassword:{
+    confirmPassword:{
         type: String,
         required: true,
     },
